@@ -31,7 +31,7 @@ if response_rad.status_code == 200:
 
         # Cargar CSV existente o crear uno nuevo
         if os.path.exists(archivo_csv):
-            df_existente = pd.read_csv(archivo_csv, encoding='utf-8')
+            df_existente = pd.read_csv(archivo_csv, encoding='utf-8', header=0)
             df_combinado = pd.concat([df_existente, df_valencia])
             df_combinado = df_combinado.drop_duplicates()
         else:
@@ -53,6 +53,7 @@ try:
     requests.post(url_telegram, data=payload)
 except Exception as e:
     print(f"Error enviando mensaje a Telegram: {e}")
+
 
 
 
