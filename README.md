@@ -38,4 +38,10 @@ Or set up the provided GitHub Actions workflow to run it automatically every day
 
 ## License
 
-This project is licensed under MIT License
+Copyright 2025, Albert Polo
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
