@@ -24,20 +24,18 @@ if response.status_code == 200:
     # Obtener los datos reales utilizando la URL proporcionada por la API
     datos_url = response.json().get('datos', '')
 
-    
     response_datos = requests.get(datos_url)
     datos = response_datos.json()
 
     # Crear un DataFrame con los datos
     df_actuales = pd.DataFrame(datos)
 
+# Ruta del archivo CSV existente
+archivo_existente = 'datos_meteorologicos.csv'
 
-# Ruta del archivo Excel existente
-archivo_existente = r'C:\Users\albert\iCloudDrive\Documents\UOC\LlumPV\datos_meteorologicos.xlsx'
-
-# Cargar el archivo Excel existente
+# Cargar el archivo CSV existente
 try:
-    df_existente = pd.read_excel(archivo_existente)
+    df_existente = pd.read_csv(archivo_existente)
 except FileNotFoundError:
     print("Archivo existente no encontrado. Se creará uno nuevo.")
     df_existente = pd.DataFrame()  # Crear un DataFrame vacío si el archivo no existe
@@ -51,5 +49,5 @@ else:
 # Eliminar duplicados basándose en la columna "fecha"
 df_combinado = df_combinado.drop_duplicates(subset="fecha")
 
-# Guardar el archivo Excel actualizado
-df_combinado.to_excel(archivo_existente, index=False)
+# Guardar el archivo CSV actualizado
+df_combinado.to_csv(archivo_existente, index=False)
