@@ -1,11 +1,9 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
 name: Run Python Script Daily
 
 on:
   schedule:
-    - cron: "0 9 * * *"   # Ejecuta todos los días a las 00:00 UTC
-  workflow_dispatch:       # Permite ejecutarlo manualmente también
+    - cron: "0 9 * * *"   # Ejecuta todos los días a las 09:00 UTC
+  workflow_dispatch:
 
 jobs:
   run-script:
@@ -25,12 +23,14 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Run script
-        run: python update_meteo.py
+        env:
+          AEMET_API_KEY: ${{ secrets.AEMET_API_KEY }}
+        run: python meteo-updater/src/update_meteo.py
 
       - name: Commit and push CSV
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-          git add datos_meteorologicos.csv
+          git add meteo-updater/src/datos_meteorologicos.csv
           git commit -m "Update CSV [skip ci]" || echo "No changes to commit"
           git push
