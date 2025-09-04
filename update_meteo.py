@@ -22,7 +22,7 @@ url = url.replace('2024-01-01T23%3A59%3A00UTC', f'{fecha_ayer}')
 try:
     response = requests.get(url, headers=headers)
     response.raise_for_status()
-except requests.exceptions.ResquestException as e:
+except requests.exceptions.RequestException as e:
     print(f"Error al conectar con la API de AEMET: {e}")
 
 # Verificar si la solicitud fue exitosa (código de estado 200)
@@ -72,4 +72,5 @@ try:
     requests.post(url_telegram, data=payload)
 except Exception as e:
     print(f"Error enviando mensaje a Telegram: {e}")
+
 
