@@ -38,7 +38,7 @@ if response.status_code == 200:
 
 # Ruta del archivo CSV existente
 archivo_existente = 'datos_meteorologicos.csv'
-df_existente = pd.read_csv(archivo_existente, encoding='utf-8')
+df_existente = pd.read_csv(archivo_existente, encoding='utf-8', header=0)
 
 
 # Combinar los datos actuales con los existentes
