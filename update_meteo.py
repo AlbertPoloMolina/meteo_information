@@ -6,7 +6,7 @@ import os
 url = 'https://opendata.aemet.es/opendata/api/valores/climatologicos/diarios/datos/fechaini/2023-12-01T00%3A00%3A00UTC/fechafin/2024-01-01T23%3A59%3A00UTC/estacion/8500A'
 headers = {
     'accept': 'application/json',
-    'api_key': os.getenv("AEMET_API_KEY")
+    'api_key': os.getenv("AEMET_API_KEY"),
     'User-Agent': 'meteo-bot/1.0 (github actions)'
 }
 
@@ -72,3 +72,4 @@ try:
     requests.post(url_telegram, data=payload)
 except Exception as e:
     print(f"Error enviando mensaje a Telegram: {e}")
+
