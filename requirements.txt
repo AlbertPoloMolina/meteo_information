@@ -1,6 +1,2 @@
 pandas
 requests
-datatime
-timedelta
-StringIO
-os
