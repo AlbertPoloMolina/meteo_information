@@ -1,0 +1,41 @@
+name: Update_radiation
+
+on:
+  schedule:
+    - cron: "0 9 0 5 *"   # Ejecuta todos los días a las 09:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run script
+        env:
+          AEMET_API_KEY: ${{ secrets.AEMET_API_KEY }}
+          API_KEY_TELEGRAM: ${{ secrets.API_KEY_TELEGRAM }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python update_radiation.py
+
+      - name: Commit and push CSV
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add datos_radiacion.csv
+          git commit -m "Update CSV [skip ci]" || echo "No changes to commit"
+          git push
