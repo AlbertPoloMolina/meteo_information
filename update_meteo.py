@@ -51,5 +51,6 @@ else:
 df_combinado = df_combinado.drop_duplicates(subset="fecha")
 
 # Guardar el archivo CSV actualizado
-df_combinado.to_csv(archivo_existente, index=False)
+df_combinado.to_csv(archivo_existente, index=False, encoding='utf-8)
+
 
