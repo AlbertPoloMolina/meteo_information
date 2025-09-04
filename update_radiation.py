@@ -9,7 +9,12 @@ headers = {
     'api_key': os.getenv("AEMET_API_KEY")
 }
 
-response_rad = requests.get(url, headers=headers)
+try:
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+except requests.exceptions.ResquestException as e:
+    print(f"Error al conectar con la API de AEMET: {e}")
+    
 if response_rad.status_code == 200:
     response_json = response_rad.json()
     if 'datos' in response_json:
@@ -47,4 +52,5 @@ try:
     requests.post(url_telegram, data=payload)
 except Exception as e:
     print(f"Error enviando mensaje a Telegram: {e}")
+
 
