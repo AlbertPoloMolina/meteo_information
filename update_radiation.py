@@ -30,4 +30,20 @@ if response_rad.status_code == 200:
         else:
             df_combinado = df_valencia
 
+
         df_combinado.to_csv(archivo_csv, index=False, encoding='utf-8')
+
+# Enviar notificación a Telegram
+API_KEY_TELEGRAM = '8350790865:AAH4Tkns-xwL06e7lUZ9GU6cbIHw2EdeQH4'
+TELEGRAM_CHAT_ID = '8350790865'
+mensaje = f"Radiación actualizada correctamente: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+
+url_telegram = f"https://api.telegram.org/bot{API_KEY_TELEGRAM}/sendMessage"
+payload = {
+    'chat_id': TELEGRAM_CHAT_ID,
+    'text': mensaje
+}
+try:
+    requests.post(url_telegram, data=payload)
+except Exception as e:
+    print(f"Error enviando mensaje a Telegram: {e}")
