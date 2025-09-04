@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 from io import StringIO
 import os
-import datetime
+from datetime import datetime
 
 url = 'https://opendata.aemet.es/opendata/api/red/especial/radiacion'
 headers = {
@@ -54,6 +54,7 @@ try:
     requests.post(url_telegram, data=payload)
 except Exception as e:
     print(f"Error enviando mensaje a Telegram: {e}")
+
 
 
 
