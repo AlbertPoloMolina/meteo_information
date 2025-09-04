@@ -7,7 +7,7 @@ url = 'https://opendata.aemet.es/opendata/api/red/especial/radiacion'
 headers = {
     'accept': 'application/json',
     'api_key': os.getenv("AEMET_API_KEY"),
-    'User-Agent": "meteo-bot/1.0 (github actions)'
+    'User-Agent': 'meteo-bot/1.0 (github actions)'
 }
 
 try:
@@ -53,6 +53,7 @@ try:
     requests.post(url_telegram, data=payload)
 except Exception as e:
     print(f"Error enviando mensaje a Telegram: {e}")
+
 
 
 
