@@ -1,0 +1,36 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+name: Run Python Script Daily
+
+on:
+  schedule:
+    - cron: "0 9 * * *"   # Ejecuta todos los días a las 00:00 UTC
+  workflow_dispatch:       # Permite ejecutarlo manualmente también
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run script
+        run: python update_meteo.py
+
+      - name: Commit and push CSV
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add datos_meteorologicos.csv
+          git commit -m "Update CSV [skip ci]" || echo "No changes to commit"
+          git push
