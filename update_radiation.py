@@ -37,7 +37,6 @@ if response_rad.status_code == 200:
         else:
             df_combinado = df_valencia
 
-
         df_combinado.to_csv(archivo_csv, index=False, encoding='utf-8')
 
 # Enviar notificación a Telegram
@@ -54,10 +53,3 @@ try:
     requests.post(url_telegram, data=payload)
 except Exception as e:
     print(f"Error enviando mensaje a Telegram: {e}")
-
-
-
-
-
-
-
