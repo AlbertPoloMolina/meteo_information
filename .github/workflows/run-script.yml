@@ -26,11 +26,16 @@ jobs:
         env:
           AEMET_API_KEY: ${{ secrets.AEMET_API_KEY }}
         run: python meteo-updater/src/update_meteo.py
+              
+      - name: Run radiacion script
+        env:
+          AEMET_API_KEY: ${{ secrets.AEMET_API_KEY }}
+        run: python meteo-updater/src/update_radiacion.py
 
       - name: Commit and push CSV
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-          git add meteo-updater/src/datos_meteorologicos.csv
+          git add meteo-updater/src/datos_meteorologicos.csv meteo-updater/src/datos_radiacion.csv
           git commit -m "Update CSV [skip ci]" || echo "No changes to commit"
           git push
