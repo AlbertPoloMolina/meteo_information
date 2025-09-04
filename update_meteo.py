@@ -54,8 +54,8 @@ df_combinado = df_combinado.drop_duplicates(subset="fecha")
 df_combinado.to_csv(archivo_existente, index=False, encoding='utf-8')
 
 # Enviar notificación a Telegram
-API_KEY_TELEGRAM = '8350790865:AAH4Tkns-xwL06e7lUZ9GU6cbIHw2EdeQH4'
-TELEGRAM_CHAT_ID = '8350790865'
+API_KEY_TELEGRAM = os.getenv("API_KEY_TELEGRAM")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 mensaje = f"Meteo actualizado correctamente: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
 
 url_telegram = f"https://api.telegram.org/bot{API_KEY_TELEGRAM}/sendMessage"
@@ -67,6 +67,7 @@ try:
     requests.post(url_telegram, data=payload)
 except Exception as e:
     print(f"Error enviando mensaje a Telegram: {e}")
+
 
 
 
