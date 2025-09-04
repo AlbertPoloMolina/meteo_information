@@ -7,6 +7,7 @@ url = 'https://opendata.aemet.es/opendata/api/valores/climatologicos/diarios/dat
 headers = {
     'accept': 'application/json',
     'api_key': os.getenv("AEMET_API_KEY")
+    'User-Agent': 'meteo-bot/1.0 (github actions)'
 }
 
 # Obtener la fecha de ayer
@@ -71,6 +72,7 @@ try:
     requests.post(url_telegram, data=payload)
 except Exception as e:
     print(f"Error enviando mensaje a Telegram: {e}")
+
 
 
 
