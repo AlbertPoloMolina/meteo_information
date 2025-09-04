@@ -72,10 +72,3 @@ try:
     requests.post(url_telegram, data=payload)
 except Exception as e:
     print(f"Error enviando mensaje a Telegram: {e}")
-
-
-
-
-
-
-
