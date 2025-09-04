@@ -1,11 +1,12 @@
 import requests
 import pandas as pd
 from datetime import datetime, timedelta
+import os
 
 url = 'https://opendata.aemet.es/opendata/api/valores/climatologicos/diarios/datos/fechaini/2023-12-01T00%3A00%3A00UTC/fechafin/2024-01-01T23%3A59%3A00UTC/estacion/8500A'
 headers = {
     'accept': 'application/json',
-    'api_key': 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcG9sb21vQHVvYy5lZHUiLCJqdGkiOiI2MDUyMDYxNC05MzIxLTRlYjgtOWZlYi0yZjQ5MjM0NzIwYTciLCJpc3MiOiJBRU1FVCIsImlhdCI6MTcwMjU0OTQ0OCwidXNlcklkIjoiNjA1MjA2MTQtOTMyMS00ZWI4LTlmZWItMmY0OTIzNDcyMGE3Iiwicm9sZSI6IiJ9.dOAqVM7vBQaSUY_cVAcclBSyVj_NNpZSfpaTDjEsK4s'
+    'api_key': os.getenv("AEMET_API_KEY")
 }
 
 # Obtener la fecha de ayer
@@ -51,3 +52,4 @@ df_combinado = df_combinado.drop_duplicates(subset="fecha")
 
 # Guardar el archivo CSV actualizado
 df_combinado.to_csv(archivo_existente, index=False)
+
