@@ -34,7 +34,7 @@ jobs:
           AEMET_API_KEY: ${{ secrets.AEMET_API_KEY }}
           API_KEY_TELEGRAM: ${{ secrets.API_KEY_TELEGRAM }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: python update_radiacion.py
+        run: python update_radiation.py
 
       - name: Commit and push CSV
         run: |
