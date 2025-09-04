@@ -38,7 +38,7 @@ if response.status_code == 200:
 
 # Ruta del archivo CSV existente
 archivo_existente = 'datos_meteorologicos.csv'
-df_existente = pd.read_csv(archivo_existente)
+df_existente = pd.read_csv(archivo_existente, encoding='utf-8')
 
 
 # Combinar los datos actuales con los existentes
@@ -67,6 +67,3 @@ try:
     requests.post(url_telegram, data=payload)
 except Exception as e:
     print(f"Error enviando mensaje a Telegram: {e}")
-
-
-
