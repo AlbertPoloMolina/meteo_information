@@ -14,7 +14,7 @@ headers = {
 try:
     response_rad = requests.get(url, headers=headers)
     response_rad.raise_for_status()
-except requests.exceptions.ResquestException as e:
+except requests.exceptions.RequestException as e:
     print(f"Error al conectar con la API de AEMET: {e}")
     
 if response_rad.status_code == 200:
@@ -53,4 +53,5 @@ try:
     requests.post(url_telegram, data=payload)
 except Exception as e:
     print(f"Error enviando mensaje a Telegram: {e}")
+
 
