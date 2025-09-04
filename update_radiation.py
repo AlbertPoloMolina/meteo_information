@@ -43,7 +43,7 @@ if response_rad.status_code == 200:
 # Enviar notificación a Telegram
 API_KEY_TELEGRAM = os.getenv("API_KEY_TELEGRAM")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
-mensaje = f"Radiación actualizada correctamente: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+mensaje = f"Radiación actualizada correctamente!"
 
 url_telegram = f"https://api.telegram.org/bot{API_KEY_TELEGRAM}/sendMessage"
 payload = {
@@ -54,6 +54,7 @@ try:
     requests.post(url_telegram, data=payload)
 except Exception as e:
     print(f"Error enviando mensaje a Telegram: {e}")
+
 
 
 
