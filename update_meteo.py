@@ -77,10 +77,16 @@ else:
     print("No se obtuvieron datos nuevos de la API.")
 
 
+
+filas_antes = len(df_existente) if not df_existente.empty else 0
+filas_despues = len(df_combinado)
+filas_nuevas = filas_despues - filas_antes
+
 # Enviar notificación a Telegram
 API_KEY_TELEGRAM = os.getenv("API_KEY_TELEGRAM")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
-mensaje = f"Meteo actualizado correctamente!"
+
+mensaje = f"✅ Actualización completada.\nFilas antes: {filas_antes}\nFilas después: {filas_despues}\n➕ Nuevas filas: {filas_nuevas}"
 
 url_telegram = f"https://api.telegram.org/bot{API_KEY_TELEGRAM}/sendMessage"
 payload = {
@@ -91,4 +97,5 @@ try:
     requests.post(url_telegram, data=payload)
 except Exception as e:
     print(f"Error enviando mensaje a Telegram: {e}")
+
 
