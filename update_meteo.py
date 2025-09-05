@@ -1,57 +1,81 @@
 import requests
 import pandas as pd
 from datetime import datetime, timedelta
+from requests.adapters import HTTPAdapter, Retry
 import os
 
-url = 'https://opendata.aemet.es/opendata/api/valores/climatologicos/diarios/datos/fechaini/2023-12-01T00%3A00%3A00UTC/fechafin/2024-01-01T23%3A59%3A00UTC/estacion/8500A'
+# Configuración de reintentos
+session = requests.Session()
+retries = Retry(
+    total=5,  # número máximo de intentos
+    backoff_factor=2,  # espera exponencial: 2s, 4s, 8s...
+    status_forcelist=[500, 502, 503, 504],  # errores de servidor que se reintentan
+    allowed_methods=["GET"]
+)
+adapter = HTTPAdapter(max_retries=retries)
+session.mount("http://", adapter)
+session.mount("https://", adapter)
+
+# Construcción de la URL dinámica
+url_base = 'https://opendata.aemet.es/opendata/api/valores/climatologicos/diarios/datos/fechaini/2023-12-01T00%3A00%3A00UTC/fechafin/2024-01-01T23%3A59%3A00UTC/estacion/8500A'
 headers = {
     'accept': 'application/json',
     'api_key': os.getenv("AEMET_API_KEY"),
     'User-Agent': 'meteo-bot/1.0 (github actions)'
 }
 
-# Obtener la fecha de ayer
+# Fechas dinámicas (últimos 30 días hasta ayer)
 fecha_ayer = (datetime.today() - timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%SUTC')
 fecha_inicio = (datetime.today() - timedelta(days=30)).strftime('%Y-%m-%dT%H:%M:%SUTC')
 
-# Modificar la URL para usar la fecha de ayer como fecha de fin
-url = url.replace('2023-12-01T00%3A00%3A00UTC', f'{fecha_inicio}')
-url = url.replace('2024-01-01T23%3A59%3A00UTC', f'{fecha_ayer}')
+url = url_base.replace('2023-12-01T00%3A00%3A00UTC', fecha_inicio)
+url = url.replace('2024-01-01T23%3A59%3A00UTC', fecha_ayer)
 
-# Realizar la solicitud a la API
+df_actuales = pd.DataFrame()
+
 try:
-    response = requests.get(url, headers=headers)
+    # Primer request a la API
+    response = session.get(url, headers=headers, timeout=30)
     response.raise_for_status()
+
+    if response.status_code == 200:
+        # Obtener URL real de los datos
+        datos_url = response.json().get('datos', '')
+        if datos_url:
+            response_datos = session.get(datos_url, timeout=30)
+            response_datos.raise_for_status()
+            datos = response_datos.json()
+
+            # Crear DataFrame con los datos obtenidos
+            df_actuales = pd.DataFrame(datos)
+
 except requests.exceptions.RequestException as e:
     print(f"Error al conectar con la API de AEMET: {e}")
 
-# Verificar si la solicitud fue exitosa (código de estado 200)
-if response.status_code == 200:
-    # Obtener los datos reales utilizando la URL proporcionada por la API
-    datos_url = response.json().get('datos', '')
-
-    response_datos = requests.get(datos_url)
-    datos = response_datos.json()
-
-    # Crear un DataFrame con los datos
-    df_actuales = pd.DataFrame(datos)
-
-# Ruta del archivo CSV existente
+# Procesar el CSV existente y combinar datos
 archivo_existente = 'datos_meteorologicos.csv'
-df_existente = pd.read_csv(archivo_existente, encoding='utf-8', header=0)
 
-
-# Combinar los datos actuales con los existentes
-if not df_existente.empty:
-    df_combinado = pd.concat([df_existente, df_actuales])
+if os.path.exists(archivo_existente):
+    df_existente = pd.read_csv(archivo_existente, encoding='utf-8', header=0)
 else:
-    df_combinado = df_actuales
+    df_existente = pd.DataFrame()
 
-# Eliminar duplicados basándose en la columna "fecha"
-df_combinado = df_combinado.drop_duplicates(subset="fecha")
+if not df_actuales.empty:
+    if not df_existente.empty:
+        df_combinado = pd.concat([df_existente, df_actuales])
+    else:
+        df_combinado = df_actuales
 
-# Guardar el archivo CSV actualizado
-df_combinado.to_csv(archivo_existente, index=False, encoding='utf-8')
+    # Eliminar duplicados por fecha
+    if "fecha" in df_combinado.columns:
+        df_combinado = df_combinado.drop_duplicates(subset="fecha")
+
+    # Guardar CSV actualizado
+    df_combinado.to_csv(archivo_existente, index=False, encoding='utf-8')
+    print("Archivo CSV actualizado correctamente.")
+else:
+    print("No se obtuvieron datos nuevos de la API.")
+
 
 # Enviar notificación a Telegram
 API_KEY_TELEGRAM = os.getenv("API_KEY_TELEGRAM")
@@ -67,3 +91,4 @@ try:
     requests.post(url_telegram, data=payload)
 except Exception as e:
     print(f"Error enviando mensaje a Telegram: {e}")
+
