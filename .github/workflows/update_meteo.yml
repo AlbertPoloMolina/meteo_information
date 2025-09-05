@@ -2,7 +2,7 @@ name: Update_Meteo
 
 on:
   schedule:
-    - cron: "0 9 * * *"   # Ejecuta todos los días a las 09:00 UTC
+    - cron: "5 9 * * *"   # Ejecuta todos los días a las 09:00 UTC
   workflow_dispatch:
 
 permissions:
